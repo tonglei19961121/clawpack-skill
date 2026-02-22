@@ -1,7 +1,7 @@
 {
-  "name": "clawpack",
-  "description": "Backup and restore OpenClaw configuration - pack, unpack, backup, restore",
-  "version": "1.0.0",
+  "name": "clawpack-skill",
+  "description": "Backup and restore OpenClaw configuration - pack, unpack, backup, restore, profile management",
+  "version": "1.1.0",
   "tools": [
     {
       "name": "clawpack_pack",
@@ -11,7 +11,7 @@
         "properties": {
           "outputFile": {
             "type": "string",
-            "description": "Optional output filename (default: auto-generated like clawpack-backup-1234567890.zip)"
+            "description": "Optional output filename (default: auto-generated)"
           }
         }
       }
@@ -47,25 +47,87 @@
           "repo": {
             "type": "string",
             "description": "Push to a GitHub repository instead of Gist (format: owner/repo)"
+          },
+          "profile": {
+            "type": "string",
+            "description": "Push to a named profile (e.g., 'work-mac', 'home-pc')"
           }
         }
       }
     },
     {
       "name": "clawpack_restore",
-      "description": "Restore OpenClaw configuration from GitHub Gist or repository.",
+      "description": "Restore OpenClaw configuration from GitHub Gist, repository, or named profile.",
       "parameters": {
         "type": "object",
         "properties": {
           "source": {
             "type": "string",
-            "description": "Gist ID or repo (owner/repo). Optional if user has a default backup set."
+            "description": "Gist ID, profile name (e.g., 'work-mac'), or repo (owner/repo). Optional if user has a default profile."
           },
           "full": {
             "type": "boolean",
             "description": "Restore full configuration (not just skills) - recommended"
           }
         }
+      }
+    },
+    {
+      "name": "clawpack_profileList",
+      "description": "List all backup profiles with their nicknames. Use this to show user their saved configurations.",
+      "parameters": {
+        "type": "object",
+        "properties": {}
+      }
+    },
+    {
+      "name": "clawpack_profileAdd",
+      "description": "Add a new backup profile with a nickname. Use this when user wants to save a Gist ID with a memorable name like 'work-mac' or 'home-pc'.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nickname for this profile (e.g., 'work-mac', 'home-pc', 'laptop')"
+          },
+          "gistId": {
+            "type": "string",
+            "description": "The Gist ID (32-character hex string)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Optional description for this profile"
+          }
+        },
+        "required": ["name", "gistId"]
+      }
+    },
+    {
+      "name": "clawpack_profileUse",
+      "description": "Switch to a different backup profile. Use this when user wants to change their default configuration.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the profile to switch to"
+          }
+        },
+        "required": ["name"]
+      }
+    },
+    {
+      "name": "clawpack_profileRemove",
+      "description": "Remove a backup profile. Use this when user no longer needs a saved configuration.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of the profile to remove"
+          }
+        },
+        "required": ["name"]
       }
     },
     {

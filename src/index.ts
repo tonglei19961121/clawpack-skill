@@ -93,7 +93,7 @@ export const tools = {
   },
 
   // Backup to GitHub
-  async backup(params: { full?: boolean; workspace?: boolean; repo?: string }) {
+  async backup(params: { full?: boolean; workspace?: boolean; repo?: string; profile?: string }) {
     if (!await checkClawpack()) {
       return {
         success: false,
@@ -105,6 +105,7 @@ export const tools = {
     if (params.full) args += ' --full';
     if (params.workspace) args += ' --workspace';
     if (params.repo) args += ` --repo ${params.repo}`;
+    if (params.profile) args += ` --profile ${params.profile}`;
     
     try {
       const { stdout } = await runClawpack(args);
@@ -166,6 +167,125 @@ export const tools = {
       return {
         success: false,
         message: "Failed to restore configuration",
+        error: error.message
+      };
+    }
+  },
+
+  // Profile management
+  async profileList() {
+    if (!await checkClawpack()) {
+      return {
+        success: false,
+        message: "clawpack is not installed"
+      };
+    }
+    
+    try {
+      const { stdout } = await runClawpack('profile list');
+      return {
+        success: true,
+        profiles: stdout
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        error: error.message
+      };
+    }
+  },
+
+  async profileAdd(params: { name: string; gistId: string; description?: string }) {
+    if (!await checkClawpack()) {
+      return {
+        success: false,
+        message: "clawpack is not installed"
+      };
+    }
+    
+    if (!params.name || !params.gistId) {
+      return {
+        success: false,
+        message: "Profile name and Gist ID are required"
+      };
+    }
+    
+    try {
+      let args = `profile add ${params.name} ${params.gistId}`;
+      if (params.description) args += ` "${params.description}"`;
+      
+      const { stdout } = await runClawpack(args);
+      return {
+        success: true,
+        message: "Profile added successfully!",
+        details: stdout
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: "Failed to add profile",
+        error: error.message
+      };
+    }
+  },
+
+  async profileUse(params: { name: string }) {
+    if (!await checkClawpack()) {
+      return {
+        success: false,
+        message: "clawpack is not installed"
+      };
+    }
+    
+    if (!params.name) {
+      return {
+        success: false,
+        message: "Profile name is required"
+      };
+    }
+    
+    try {
+      const { stdout } = await runClawpack(`profile use ${params.name}`);
+      return {
+        success: true,
+        message: `Switched to profile "${params.name}"`,
+        details: stdout
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: "Failed to switch profile",
+        error: error.message
+      };
+    }
+  },
+
+  async profileRemove(params: { name: string }) {
+    if (!await checkClawpack()) {
+      return {
+        success: false,
+        message: "clawpack is not installed"
+      };
+    }
+    
+    if (!params.name) {
+      return {
+        success: false,
+        message: "Profile name is required"
+      };
+    }
+    
+    try {
+      const { stdout } = await runClawpack(`profile remove ${params.name}`);
+      return {
+        success: true,
+        message: `Profile "${params.name}" removed`,
+        details: stdout
+      };
+    } catch (error: any) {
+      return {
+        success: false,
+        message: "Failed to remove profile",
         error: error.message
       };
     }
@@ -246,6 +366,17 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     });
   } else {
     console.log('Usage: clawpack-skill <command> [options]');
-    console.log('Commands: pack, unpack, backup, restore, status, list');
+    console.log('');
+    console.log('Commands:');
+    console.log('  pack              Pack configuration to local file');
+    console.log('  unpack            Unpack configuration from file');
+    console.log('  backup            Backup to GitHub');
+    console.log('  restore           Restore from GitHub');
+    console.log('  profileList       List all profiles');
+    console.log('  profileAdd        Add a new profile');
+    console.log('  profileUse        Switch to a profile');
+    console.log('  profileRemove     Remove a profile');
+    console.log('  status            Check installation status');
+    console.log('  list              List installed skills');
   }
 }
