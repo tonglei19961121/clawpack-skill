@@ -1,6 +1,6 @@
 {
   "name": "clawpack-skill",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "OpenClaw skill for clawpack - backup and restore configuration",
   "type": "module",
   "bin": {
