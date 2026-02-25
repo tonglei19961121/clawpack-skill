@@ -2,9 +2,9 @@ FROM node:20-alpine
 
 WORKDIR /app
 
-# 安装依赖
+# 安装依赖（不运行脚本）
 COPY package*.json ./
-RUN npm ci
+RUN npm install --ignore-scripts
 
 # 复制源码并构建
 COPY . .
