@@ -3,11 +3,14 @@ name: clawpack-skill
 description: |
   OpenClaw 配置备份与恢复工具集成。通过 clawpack CLI 管理配置打包、多设备配置同步、GitHub Gist 云端备份。
   Use when: 用户需要 (1) 备份/打包 OpenClaw 配置，(2) 恢复/解压配置，(3) 管理多设备配置 profile，(4) 同步配置到 GitHub Gist，(5) 迁移配置到新电脑。
+allowed-tools:
+  - Bash(node:dist/cli.js)
+  - Bash(clawpack:*)
 ---
 
 # Clawpack Skill
 
-clawpack 是一个 OpenClaw 配置管理工具，支持本地打包、多设备配置管理和云端备份。
+OpenClaw 配置备份与恢复工具集成。通过 clawpack CLI 管理配置打包、多设备配置同步、GitHub Gist 云端备份。
 
 ## 前提条件
 
@@ -115,9 +118,24 @@ clawpack backup
 | 变量 | 说明 |
 |------|------|
 | `CLAWPACK_TOKEN` | GitHub Personal Access Token |
+| `GITHUB_TOKEN` | GitHub Personal Access Token（备选）|
+
+## Docker 使用
+
+```bash
+# 构建镜像
+docker build -t clawpack-skill .
+
+# 运行
+docker run --rm -v ~/.openclaw:/root/.openclaw clawpack-skill
+```
 
 ## 完整帮助
 
 ```bash
 clawpack --help
 ```
+
+## 版本
+
+- v1.2.0 - 当前版本
